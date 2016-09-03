@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Home</title>
+<!-- jquery import -->
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<!-- *********************************************************************************** -->
+<script>
+	$(function() {
+		//전역변수 설정
+		var height1, height2, tallHeight, shortHeight, maxGrowth, birthHeight;
+		var geneArray1 = new Array();
+		var geneArray2 = new Array();
+		var randomArray1 = new Array();
+		var randomArray2 = new Array();
+		var tempArray = new Array();
+		var childArray = new Array();
+		
+
+		//random숫자 발생기
+		function randomNumberFromRange(min, max) {
+			var randomNumber = Math
+					.floor(Math.random() * (max - min + 1) + min);
+			return randomNumber;
+		}
+
+		//randomtest1 용
+		$("button[id='randomtest1']").click(function() {
+			var result;
+
+			randomArray1[0] = randomNumberFromRange(0, 3);
+
+			while (true) {
+				randomArray1[1] = randomNumberFromRange(0, 3);
+				if (randomArray1[0] != randomArray1[1])
+					break;
+			}
+			arrayColorInit(1);
+			arrayColorChange(randomArray1[0],1);
+			arrayColorChange(randomArray1[1],1);
+			result = randomArray1[0] + ", " + randomArray1[1];
+			
+			$("#randomresult1").html(result);
+		});
+		//randomtest2용
+		$("button[id='randomtest2']").click(function() {
+			var result;
+
+			randomArray2[0] = randomNumberFromRange(0, 3);
+
+			while (true) {
+				randomArray2[1] = randomNumberFromRange(0, 3);
+				if (randomArray2[0] != randomArray2[1])
+					break;
+			}
+			arrayColorInit(2);
+			arrayColorChange(randomArray2[0],2);
+			arrayColorChange(randomArray2[1],2);
+			result = randomArray2[0] + ", " + randomArray2[1];
+			$("#randomresult2").html(result);
+		});
+		
+		//배열 색깔 초기화
+		var arrayColorInit = function(player){
+			if(player == 1){
+				$("select[name = 'p1_1']").css("background-color","white");
+				$("select[name = 'p1_2']").css("background-color","white");
+				$("select[name = 'p1_3']").css("background-color","white");
+				$("select[name = 'p1_4']").css("background-color","white");
+			}else{
+				$("select[name = 'p2_1']").css("background-color","white");
+				$("select[name = 'p2_2']").css("background-color","white");
+				$("select[name = 'p2_3']").css("background-color","white");
+				$("select[name = 'p2_4']").css("background-color","white");
+			}
+		}
+		//배열색깔 변경기
+		var arrayColorChange = function(randomNum, player){
+			if(player == 1){
+				switch(randomNum){
+				case 0:
+					$("select[name = 'p1_1']").css("background-color","blue");
+					break;
+				case 1:
+					$("select[name = 'p1_2']").css("background-color","blue");
+					break;
+				case 2:
+					$("select[name = 'p1_3']").css("background-color","blue");
+					break;
+				case 3:
+					$("select[name = 'p1_4']").css("background-color","blue");
+				}
+			}else{
+				switch(randomNum){
+				case 0:
+					$("select[name = 'p2_1']").css("background-color","red");
+					break;
+				case 1:
+					$("select[name = 'p2_2']").css("background-color","red");
+					break;
+				case 2:
+					$("select[name = 'p2_3']").css("background-color","red");
+					break;
+				case 3:
+					$("select[name = 'p2_4']").css("background-color","red");
+				}
+			}
+		}
+		
+		//player1의 유전자 선택값 나타내기
+		$("button[id='getResult1']").click(
+				function() {
+					var result = "";
+					geneArray1[0] = $("select[name = 'p1_1']").val();
+					geneArray1[1] = $("select[name = 'p1_2']").val();
+					geneArray1[2] = $("select[name = 'p1_3']").val();
+					geneArray1[3] = $("select[name = 'p1_4']").val();
+					
+					for(var i=0; i<4; i++){
+						result+=geneArray1[i];
+					}
+					$('#test1').html(result);
+		});
+
+		//player2의 선택값 나타내기
+		$("button[id='getResult2']").click(
+				function() {
+					var result = "";
+					geneArray2[0] = $("select[name = 'p2_1']").val();
+					geneArray2[1] = $("select[name = 'p2_2']").val();
+					geneArray2[2] = $("select[name = 'p2_3']").val();
+					geneArray2[3] = $("select[name = 'p2_4']").val();
+					
+					for(var i=0; i<4; i++){
+						result+=geneArray2[i];
+					}
+					$('#test2').html(result);
+		});
+		
+		//자식 유전자 만드는 함수
+		var makeChildGene = function(tempArray){
+			//중복체크용 배열
+			var checkingArray = new Array(0,0,0,0); //선정되었으면 1표시로 바꿔준다.
+			var randomIndex = null;
+						
+			//child유전자 배열에 temp배열것들 랜덤으로 넣어주기
+			for(var i=0; i<4; i++){
+				while(true){
+					randomIndex = randomNumberFromRange(0,3);
+					if(checkingArray[randomIndex] != 1){
+						checkingArray[randomIndex] = 1; //1로 바꿔주고 빠져나간다.
+						break;
+					}
+				}
+				
+				childArray[i] = tempArray[randomIndex]; 
+			}
+		}
+		
+		//자식 유전자 표시 함수
+		var showChildGene = function(){
+			$("td[name = 'child_0th']").html(childArray[0]);
+			$("td[name = 'child_1th']").html(childArray[1]);
+			$("td[name = 'child_2th']").html(childArray[2]);
+			$("td[name = 'child_3th']").html(childArray[3]);
+			
+		}
+		
+		//키큰 사람 찾기
+		var whoIsTaller = function(height1, height2){
+			if(height1 >= height2){
+				tallHeight = height1;
+				shortHeight = height2;
+			}else{
+				tallHeight = height2;
+				shortHeight = height1;
+			}
+		}
+		
+		//최대 성장폭 구하기
+		var getMaxGrowth = function(sumHeight){
+			var sqrtedSumHeight = Math.sqrt(sumHeight).toFixed(3)*0.01; //소수점3자리수 까지 해주고 100으로 나눠줌.
+			return (sumHeight * sqrtedSumHeight/2).toFixed(1);
+		}
+		
+		//성장폭 보여주기
+		var showMaxGrowth = function(){
+			$("span[id='maxGrowth']").html(maxGrowth);
+		}
+		
+		//childGene의 점수메기기
+		var getOneScore = function(){
+			var oneScore = 0;
+			var score;
+			for(var i=0; i<4; i++){
+				score = 4-i; //점수
+				if(childArray[i] == 1){
+					oneScore+=score;
+				}
+			}
+			return oneScore*0.1; //1. 유전자의 비중이 어느정도냐?
+		}
+		
+		//birthHeight 구하기
+		var getBirthHeight = function(){
+			var tallerOne = tallHeight;
+			var shorterOne = shortHeight - maxGrowth;
+			var oneScore = getOneScore();
+			var zeroScore = 1-oneScore;
+			return (tallerOne*oneScore + shorterOne*zeroScore).toFixed(2);
+		}
+		
+		var showBirthHeight = function(){
+			$("span[name = 'birthHeight']").html(getBirthHeight());
+		}
+		
+		//교배버튼에 대한 이벤트처리
+		$("button[id='btn_fusion']").click(
+			function(){
+				//1. 교배 필드/ 입력된 키 정보 받아오기/ 키큰 사람 정하기
+				height1 = parseInt($("input[id = 'height1']").val());		
+				height2 = parseInt($("input[id = 'height2']").val());
+				whoIsTaller(height1,height2);
+				maxGrowth = getMaxGrowth(height1+height2);
+				
+				
+				
+				//tempArray를 만들어준다.
+				tempArray[0] = geneArray1[randomArray1[0]];
+				tempArray[1] = geneArray1[randomArray1[1]];
+				tempArray[2] = geneArray2[randomArray2[0]];
+				tempArray[3] = geneArray2[randomArray2[1]];
+						
+				//자식 유전자 배열 만들기
+				makeChildGene(tempArray);
+				showChildGene();
+				showMaxGrowth();
+				showBirthHeight();
+			}
+		);
+	});
+</script>
+<!-- -------------------------------------------------------------------------------------------- -->
+<style>
+#choice {
+	text-align: center;
+}
+
+body {
+	border: solid black 1px;
+	width: 960px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#wrapper {
+	overflow: hidden;
+}
+
+#p1 {
+	border: solid blue 1px;
+	width: 400px;
+	float: left;
+	margin-left: 10px;
+}
+
+#p2 {
+	border: solid red 1px;
+	width: 400px;
+	float: left;
+	margin-left: 10px;
+}
+
+#result {
+	border: solid green 1px;
+	width: 835px;
+	margin-top: 20px;
+	margin-bottom: 30px;
+}
+
+#whole_wrapper {
+	width: 850px;
+	margin: 0 auto;
+}
+
+table, td {
+	border: solid black 1px;
+	margin: 0 auto;
+	font-size: 30px;
+}
+
+#fusion {
+	width: 835px;
+}
+</style>
+</head>
+
+<!-- =========================================================================================== -->
+<body>
+	<div id='whole_wrapper'>
+		<h1 id='choice'>조다고치 유전 공식 (ex : 키)</h1>
+		<h2>1 = 우성, 0 = 열성</h2>
+		<div id='wrapper'>
+			<div id='p1'>
+				<h2>player1</h2>
+				<p>1. 키입력/ 2. 유전자선택후 만들기 버튼/ 3. 랜덤버튼</p>
+				키 : <input id='height1' type='text'>cm<br> <span>유전자</span>
+				<table id='gene_arr1'>
+					<tr>
+						<td><select name='p1_1'><option>0</option>
+								<option>1</option></select></td>
+						<td><select name='p1_2'><option>0</option>
+								<option>1</option></select></td>
+						<td><select name='p1_3'><option>0</option>
+								<option>1</option></select></td>
+						<td><select name='p1_4'><option>0</option>
+								<option>1</option></select></td>
+					</tr>
+				</table>
+				<button id='getResult1'>유전자만들기</button>
+				<div id='test1'></div>
+
+				<button id='randomtest1'>랜덤 선택</button>
+				<div id='randomresult1'></div>
+			</div>
+
+			<div id='p2'>
+				<h2>player2</h2>
+				<p>1. 키입력/ 2. 유전자선택후 만들기 버튼/ 3. 랜덤버튼</p>
+				키 : <input id='height2' type='text'>cm<br> <span>유전자</span>
+				<table id='gene_arr2'>
+					<tr>
+						<td><select name='p2_1'><option>0</option>
+								<option>1</option></select></td>
+						<td><select name='p2_2'><option>0</option>
+								<option>1</option></select></td>
+						<td><select name='p2_3'><option>0</option>
+								<option>1</option></select></td>
+						<td><select name='p2_4'><option>0</option>
+								<option>1</option></select></td>
+					</tr>
+				</table>
+				<button id='getResult2'>유전자만들기</button>
+				<div id='test2'></div>
+				<button id='randomtest2'>랜덤 선택</button>
+				<div id='randomresult2'></div>
+
+			</div>
+		</div>
+		<div id='fusion'>
+			<br>
+			<button id='btn_fusion'>교배!</button>
+			<br>
+		</div>
+		<div id='result'>
+			<h2>자식 유전자</h2>
+			<table>
+				<tr>
+					<td name='child_0th'></td>
+					<td name='child_1th'></td>
+					<td name='child_2th'></td>
+					<td name='child_3th'></td>
+				</tr>
+			</table>
+			<br>
+			최대 성장가능키 : <span id = 'maxGrowth'></span><br>
+			출생시 키: <span name = 'birthHeight'></span>
+			<br>
+		</div>
+
+	</div>
+
+
+</body>
+</html>
